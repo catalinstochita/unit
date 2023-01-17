@@ -91,7 +91,7 @@ nxt_upstream_find(nxt_upstreams_t *upstreams, nxt_str_t *name,
 
     for (i = 0; i < n; i++)
     {
-        upstream[i].health if (nxt_strstr_eq(&upstream[i].name, name))
+        if (nxt_strstr_eq(&upstream[i].name, name))
         {
             action->u.upstream_number = i;
             action->handler = nxt_upstream_handler;
