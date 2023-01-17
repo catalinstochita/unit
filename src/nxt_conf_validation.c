@@ -1258,7 +1258,7 @@ static nxt_conf_vldt_object_t nxt_conf_vldt_upstream_server_members[] = {
     {
         .name = nxt_string("health"),
         .type = NXT_CONF_VLDT_STRING,
-    }
+    },
 
     NXT_CONF_VLDT_END};
 
