@@ -34,7 +34,7 @@ static nxt_upstream_t *nxt_upstream_round_robin_joint_create(
     nxt_router_temp_conf_t *tmcf, nxt_upstream_t *upstream);
 static void nxt_upstream_round_robin_server_get(nxt_task_t *task,
                                                 nxt_upstream_server_t *us);
-static void *nxt_upstream_health_handler(nxt_upstream_round_robin_t *urr);
+static void nxt_upstream_health_handler(nxt_upstream_round_robin_t *urr);
 
 static const nxt_upstream_server_proto_t nxt_upstream_round_robin_proto = {
     .joint_create = nxt_upstream_round_robin_joint_create,
@@ -54,6 +54,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     nxt_conf_value_t *servers_conf, *srvcf, *wtcf, *hhcf;
     nxt_upstream_round_robin_t *urr;
     nxt_thread_link_t *link;
+    nxt_thread_handle_t handle;
 
     static nxt_str_t servers = nxt_string("servers");
     static nxt_str_t weight = nxt_string("weight");
@@ -126,19 +127,19 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     }
 
     link = nxt_zalloc(sizeof(nxt_thread_link_t));
-    // link->start = start;
     link->work.data = urr;
 
-    urr->health_thread = nxt_thread_create(&nxt_upstream_health_handler, link);
+    urr->health_thread = nxt_thread_create(&handle, link);
     upstream->proto = &nxt_upstream_round_robin_proto;
     upstream->type.round_robin = urr;
 
     return NXT_OK;
 }
 
-static void *
+static void
 nxt_upstream_health_handler(nxt_upstream_round_robin_t *urr)
 {
+    nxt_thread_link_t *link;
     // nxt_str_t hh;
     uint32_t i, n;
     n = urr->server;
