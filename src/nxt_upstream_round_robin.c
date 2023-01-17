@@ -118,7 +118,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].weight = wt;
         urr->server[i].effective_weight = wt;
         urr->server[i].health = hhcf;
-        urr->server[i].health_status = true;
+        urr->server[i].health_status = 1;
     }
 
     upstream->proto = &nxt_upstream_round_robin_proto;
@@ -188,7 +188,7 @@ nxt_upstream_round_robin_server_get(nxt_task_t *task, nxt_upstream_server_t *us)
 
     for (i = 0; i < n; i++)
     {
-        if (s[i].health_status == false)
+        if (!s[i].health_status)
         {
             continue;
         }
