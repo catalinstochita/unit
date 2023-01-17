@@ -4,11 +4,11 @@
  * Copyright (C) NGINX, Inc.
  */
 
+#include <nxt_main.h>
 #include <math.h>
 #include <nxt_router.h>
 #include <nxt_http.h>
 #include <nxt_upstream.h>
-#include <nxt_thread_time.h>
 
 struct nxt_upstream_round_robin_server_s
 {
