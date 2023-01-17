@@ -150,8 +150,8 @@ static void *nxt_upstream_health_handler(void *arg)
 {
     struct arg_struct *args = (struct arg_struct *)arg;
     nxt_task_t *task = args->task;
-    struct nxt_http_request_t *r;
-    struct nxt_buf_t *out;
+    struct nxt_http_request_s *r;
+    struct nxt_buf_s *out;
     while (1)
     {
         nxt_http_request_send(task, r, out);
