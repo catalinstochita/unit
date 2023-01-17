@@ -4,7 +4,6 @@
  * Copyright (C) NGINX, Inc.
  */
 
-#include <nxt_main.h>
 #include <math.h>
 #include <nxt_router.h>
 #include <nxt_http.h>
@@ -28,14 +27,15 @@ struct nxt_upstream_round_robin_s
 {
     uint32_t items;
     nxt_upstream_round_robin_server_t server[0];
-    nxt_work_handler_t health_thread;
+    pthread_t health_thread;
 };
 
 static nxt_upstream_t *nxt_upstream_round_robin_joint_create(
     nxt_router_temp_conf_t *tmcf, nxt_upstream_t *upstream);
 static void nxt_upstream_round_robin_server_get(nxt_task_t *task,
                                                 nxt_upstream_server_t *us);
-static void nxt_upstream_health_handler(nxt_upstream_round_robin_t *urr);
+// static void nxt_upstream_health_handler(nxt_upstream_round_robin_t *urr);
+// static void * nxt_upstream_health_handler(void * arg)
 
 static void nxt_cache_timeout_handler(nxt_event_timer_t *ev);
 
@@ -49,6 +49,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
                                 nxt_conf_value_t *upstream_conf, nxt_upstream_t *upstream)
 {
     double total, k, w;
+    int err;
     size_t size;
     uint32_t i, n, next, wt;
     nxt_mp_t *mp;
@@ -127,49 +128,24 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
-    urr->health_thread = nxt_upstream_health_handler;
+    err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, urr);
+    if (err != 0)
+    {
+        return NXT_ERROR;
+    }
     upstream->proto = &nxt_upstream_round_robin_proto;
     upstream->type.round_robin = urr;
 
     return NXT_OK;
 }
 
-static void
-nxt_upstream_health_handler(void *data)
+static void *nxt_upstream_health_handler(void *arg)
 {
-    nxt_thread_t *thr;
-    nxt_event_timer_t *ev;
-    nxt_cache_query_t *q;
-
-    q = data;
-
-    if (&q->timeout == 0)
-    {
-        return;
-    }
-
-    ev = &q->timer;
-
-    if (!nxt_event_timer_is_set(ev))
-    {
-        thr = nxt_thread();
-        ev->log = thr->log;
-        ev->handler = nxt_cache_timeout_handler;
-        ev->data = q;
-        nxt_event_timer_ident(ev, -1);
-
-        nxt_event_timer_add(thr->engine, ev, q->timeout);
-    }
-}
-
-static void
-nxt_cache_timeout_handler(nxt_event_timer_t *ev)
-{
-    nxt_cache_query_t *q;
-
-    q = ev->data;
-
-    q->state->timeout_handler(q);
+    std::cout << "Thread Function :: Start" << std::endl;
+    // Sleep for 2 seconds
+    sleep(2);
+    std::cout << "Thread Function :: End" << std::endl;
+    return NULL;
 }
 
 //     nxt_thread_link_t *link;
