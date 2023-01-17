@@ -61,7 +61,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     nxt_sockaddr_t *sa;
     nxt_conf_value_t *servers_conf, *srvcf, *wtcf, *hhcf;
     nxt_upstream_round_robin_t *urr;
-    struct arg_struct args;
+    struct arg_struct *args;
 
     static nxt_str_t servers = nxt_string("servers");
     static nxt_str_t weight = nxt_string("weight");
