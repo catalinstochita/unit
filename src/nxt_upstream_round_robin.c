@@ -112,7 +112,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
 
         wtcf = nxt_conf_get_object_member(srvcf, &weight, NULL); // WEIGHT
         hhcf = nxt_conf_get_object_member(srvcf, &health, NULL); // WEIGHT
-        hh = (hhcf != NULL) ? nxt_conf_get_string(hhcf) : NULL;
+        hh = nxt_conf_get_string(hhcf, NULL);
         w = (wtcf != NULL) ? k * nxt_conf_get_number(wtcf) : k;
         wt = (w > 1 || w == 0) ? round(w) : 1;
 
