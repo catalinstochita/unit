@@ -126,7 +126,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
-    err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, urr);
+    err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, urr, task);
     if (err != 0)
     {
         return NXT_ERROR;
