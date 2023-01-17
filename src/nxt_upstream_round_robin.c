@@ -124,7 +124,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
-    urr->health_thread = nxt_thread_create(nxt_upstream_health_handler, urr);
+    urr->health_thread = nxt_thread_create(&nxt_upstream_health_handler, urr);
     upstream->proto = &nxt_upstream_round_robin_proto;
     upstream->type.round_robin = urr;
 
