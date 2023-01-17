@@ -27,7 +27,7 @@ struct nxt_upstream_round_robin_s
 {
     uint32_t items;
     nxt_upstream_round_robin_server_t server[0];
-    nxt_thread_t health_thread;
+    nxt_work_handler_t health_thread;
 };
 
 static nxt_upstream_t *nxt_upstream_round_robin_joint_create(
@@ -53,8 +53,6 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     nxt_sockaddr_t *sa;
     nxt_conf_value_t *servers_conf, *srvcf, *wtcf, *hhcf;
     nxt_upstream_round_robin_t *urr;
-    nxt_thread_link_t *link;
-    nxt_thread_handle_t handle;
 
     static nxt_str_t servers = nxt_string("servers");
     static nxt_str_t weight = nxt_string("weight");
@@ -126,10 +124,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
-    link = nxt_zalloc(sizeof(nxt_thread_link_t));
-    link->work.data = urr;
-
-    urr->health_thread = nxt_thread_create(&handle, link);
+    urr->health_thread = nxt_upstream_health_handler;
     upstream->proto = &nxt_upstream_round_robin_proto;
     upstream->type.round_robin = urr;
 
@@ -137,23 +132,58 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
 }
 
 static void
-nxt_upstream_health_handler(nxt_upstream_round_robin_t *urr)
+nxt_upstream_health_handler(void *data)
 {
-    nxt_thread_link_t *link;
-    // nxt_str_t hh;
-    uint32_t i, n;
-    n = urr->server;
-    while (1)
+    nxt_thread_t *thr;
+    nxt_event_timer_t *ev;
+    nxt_cache_query_t *q;
+
+    q = data;
+
+    if (&q->timeout == 0)
     {
-        for (i = 0; i < n; i++)
-        {
-            // hh = urr->server[i].health;
-            urr->server[i].health_status = 0;
-        }
-        // nxt_debug(task, "upstream health handler: \"%V\"", &urr->items);
-        nxt_nanosleep(30000000000);
+        return;
+    }
+
+    ev = &q->timer;
+
+    if (!nxt_event_timer_is_set(ev))
+    {
+        thr = nxt_thread();
+        ev->log = thr->log;
+        ev->handler = nxt_cache_timeout_handler;
+        ev->data = q;
+        nxt_event_timer_ident(ev, -1);
+
+        nxt_event_timer_add(thr->engine, ev, q->timeout);
     }
 }
+
+static void
+nxt_cache_timeout_handler(nxt_event_timer_t *ev)
+{
+    nxt_cache_query_t *q;
+
+    q = ev->data;
+
+    q->state->timeout_handler(q);
+}
+
+//     nxt_thread_link_t *link;
+//     // nxt_str_t hh;
+//     uint32_t i, n;
+//     n = urr->server;
+//     while (1)
+//     {
+//         for (i = 0; i < n; i++)
+//         {
+//             // hh = urr->server[i].health;
+//             urr->server[i].health_status = 0;
+//         }
+//         // nxt_debug(task, "upstream health handler: \"%V\"", &urr->items);
+//         nxt_nanosleep(30000000000);
+//     }
+// }
 
 static nxt_upstream_t *
 nxt_upstream_round_robin_joint_create(nxt_router_temp_conf_t *tmcf,
