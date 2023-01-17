@@ -139,10 +139,8 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
 
 static void *nxt_upstream_health_handler(void *arg)
 {
-    std::cout << "Thread Function :: Start" << std::endl;
     // Sleep for 2 seconds
     sleep(2);
-    std::cout << "Thread Function :: End" << std::endl;
     return NULL;
 }
 
