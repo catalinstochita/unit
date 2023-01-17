@@ -133,14 +133,14 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
 static void *
 nxt_upstream_health_handler(nxt_upstream_round_robin_t *urr)
 {
-    nxt_str_t hh;
+    // nxt_str_t hh;
     uint32_t i, n;
     n = urr->server;
     while (1)
     {
         for (i = 0; i < n; i++)
         {
-            hh = urr->server[i].health;
+            // hh = urr->server[i].health;
             urr->server[i].health_status = 0;
         }
         // nxt_debug(task, "upstream health handler: \"%V\"", &urr->items);
