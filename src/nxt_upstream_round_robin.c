@@ -34,6 +34,7 @@ static nxt_upstream_t *nxt_upstream_round_robin_joint_create(
     nxt_router_temp_conf_t *tmcf, nxt_upstream_t *upstream);
 static void nxt_upstream_round_robin_server_get(nxt_task_t *task,
                                                 nxt_upstream_server_t *us);
+static void *nxt_upstream_health_handler(nxt_upstream_round_robin_t *urr);
 
 static const nxt_upstream_server_proto_t nxt_upstream_round_robin_proto = {
     .joint_create = nxt_upstream_round_robin_joint_create,
