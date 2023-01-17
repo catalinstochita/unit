@@ -139,9 +139,11 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
 
 static void *nxt_upstream_health_handler(void *arg)
 {
+    nxt_http_request_t *r;
+    nxt_buf_t *out;
     while (1)
     {
-        nxt_http_request_send();
+        nxt_http_request_send(r, out);
         sleep(30);
     }
     return NULL;
