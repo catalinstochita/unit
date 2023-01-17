@@ -8,6 +8,7 @@
 #include <nxt_router.h>
 #include <nxt_http.h>
 #include <nxt_upstream.h>
+#include <nxt_thread_time.h>
 
 struct nxt_upstream_round_robin_server_s
 {
