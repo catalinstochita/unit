@@ -148,13 +148,20 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
 
 static void *nxt_upstream_health_handler(void *arg)
 {
+    int i, n;
     struct arg_struct *args = (struct arg_struct *)arg;
     nxt_task_t *task = args->task;
+    nxt_upstream_round_robin_t *urr = args->urr;
     struct nxt_http_request_s *r = malloc(sizeof(struct nxt_http_request_s));
     struct nxt_buf_s *out = malloc(sizeof(struct nxt_buf_s));
+    n = urr->items;
     while (1)
     {
-        nxt_http_request_send(task, r, out);
+        for (i = 0; i < n; i++)
+        {
+            urr->server[i].health_status = 0;
+            nxt_http_request_send(task, r, out);
+        }
         sleep(30);
     }
     return NULL;
