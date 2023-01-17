@@ -23,6 +23,12 @@ struct nxt_upstream_round_robin_server_s
     uint8_t protocol;
 };
 
+struct arg_struct
+{
+    nxt_upstream_round_robin_t *arg1;
+    nxt_task_t *arg2;
+};
+
 struct nxt_upstream_round_robin_s
 {
     uint32_t items;
@@ -55,6 +61,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     nxt_sockaddr_t *sa;
     nxt_conf_value_t *servers_conf, *srvcf, *wtcf, *hhcf;
     nxt_upstream_round_robin_t *urr;
+    struct arg_struct args;
 
     static nxt_str_t servers = nxt_string("servers");
     static nxt_str_t weight = nxt_string("weight");
@@ -126,7 +133,9 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
-    err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, urr, task);
+    args.arg1 = urr;
+    args.arg2 = task;
+    err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, args);
     if (err != 0)
     {
         return NXT_ERROR;
