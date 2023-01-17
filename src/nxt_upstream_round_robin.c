@@ -25,8 +25,8 @@ struct nxt_upstream_round_robin_server_s
 
 struct arg_struct
 {
-    nxt_upstream_round_robin_t *arg1;
-    nxt_task_t *arg2;
+    nxt_upstream_round_robin_t *urr;
+    nxt_task_t *task;
 };
 
 struct nxt_upstream_round_robin_s
@@ -133,8 +133,8 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
-    args->arg1 = urr;
-    args->arg2 = task;
+    args->urr = urr;
+    args->task = task;
     err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, args);
     if (err != 0)
     {
@@ -148,9 +148,10 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
 
 static void *nxt_upstream_health_handler(void *arg)
 {
-    nxt_task_t *task;
-    nxt_http_request_t *r;
-    nxt_buf_t *out;
+    struct arg_struct *args = (struct arg_struct *)arg;
+    nxt_task_t *task = args->task;
+    struct nxt_http_request_t r;
+    struct nxt_buf_t out;
     while (1)
     {
         nxt_http_request_send(task, r, out);
