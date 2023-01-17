@@ -61,7 +61,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     nxt_sockaddr_t *sa;
     nxt_conf_value_t *servers_conf, *srvcf, *wtcf, *hhcf;
     nxt_upstream_round_robin_t *urr;
-    struct arg_struct *args;
+    struct arg_struct *args = malloc(sizeof(struct arg_struct));
 
     static nxt_str_t servers = nxt_string("servers");
     static nxt_str_t weight = nxt_string("weight");
@@ -150,8 +150,8 @@ static void *nxt_upstream_health_handler(void *arg)
 {
     struct arg_struct *args = (struct arg_struct *)arg;
     nxt_task_t *task = args->task;
-    struct nxt_http_request_s *r;
-    struct nxt_buf_s *out;
+    struct nxt_http_request_s *r = malloc(sizeof(struct nxt_http_request_s));
+    struct nxt_buf_s *out = malloc(sizeof(struct nxt_buf_s));
     while (1)
     {
         nxt_http_request_send(task, r, out);
