@@ -47,7 +47,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     size_t size;
     uint32_t i, n, next, wt;
     nxt_mp_t *mp;
-    nxt_str_t name;
+    nxt_str_t name, hh;
     nxt_sockaddr_t *sa;
     nxt_conf_value_t *servers_conf, *srvcf, *wtcf, *hhcf;
     nxt_upstream_round_robin_t *urr;
@@ -112,12 +112,13 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
 
         wtcf = nxt_conf_get_object_member(srvcf, &weight, NULL); // WEIGHT
         hhcf = nxt_conf_get_object_member(srvcf, &health, NULL); // WEIGHT
+        hh = (hhcf != NULL) ? nxt_conf_get_string(hhcf) : NULL;
         w = (wtcf != NULL) ? k * nxt_conf_get_number(wtcf) : k;
         wt = (w > 1 || w == 0) ? round(w) : 1;
 
         urr->server[i].weight = wt;
         urr->server[i].effective_weight = wt;
-        urr->server[i].health = hhcf;
+        urr->server[i].health = hh;
         urr->server[i].health_status = 1;
     }
 
