@@ -8,7 +8,6 @@
 #include <nxt_router.h>
 #include <nxt_http.h>
 #include <nxt_upstream.h>
-#include <nxt_http.h>
 
 struct nxt_upstream_round_robin_server_s
 {
@@ -142,7 +141,7 @@ static void *nxt_upstream_health_handler(void *arg)
 {
     while (1)
     {
-        nxt_http_request_send_body();
+        nxt_http_request_send();
         sleep(30);
     }
     return NULL;
