@@ -27,6 +27,7 @@ struct nxt_upstream_round_robin_s
 {
     uint32_t items;
     nxt_upstream_round_robin_server_t server[0];
+    nxt_thread_t health_thread;
 };
 
 static nxt_upstream_t *nxt_upstream_round_robin_joint_create(
@@ -122,10 +123,29 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
+    urr->health_thread = nxt_thread_create(nxt_upstream_health_handler, urr);
     upstream->proto = &nxt_upstream_round_robin_proto;
     upstream->type.round_robin = urr;
 
     return NXT_OK;
+}
+
+static void *
+nxt_upstream_health_handler(nxt_upstream_round_robin_t *urr)
+{
+    nxt_str_t hh;
+    uint32_t i, n;
+    n = urr->server;
+    while (1)
+    {
+        for (i = 0; i < n; i++)
+        {
+            hh = urr->server[i].health;
+            urr->server[i].health_status = 0;
+        }
+        // nxt_debug(task, "upstream health handler: \"%V\"", &urr->items);
+        nxt_nanosleep(30000000000);
+    }
 }
 
 static nxt_upstream_t *
