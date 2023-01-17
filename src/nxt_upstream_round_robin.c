@@ -53,6 +53,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     nxt_sockaddr_t *sa;
     nxt_conf_value_t *servers_conf, *srvcf, *wtcf, *hhcf;
     nxt_upstream_round_robin_t *urr;
+    nxt_thread_link_t *link;
 
     static nxt_str_t servers = nxt_string("servers");
     static nxt_str_t weight = nxt_string("weight");
@@ -124,7 +125,11 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
-    urr->health_thread = nxt_thread_create(&nxt_upstream_health_handler, urr);
+    link = nxt_zalloc(sizeof(nxt_thread_link_t));
+    // link->start = start;
+    link->work.data = urr;
+
+    urr->health_thread = nxt_thread_create(&nxt_upstream_health_handler, link);
     upstream->proto = &nxt_upstream_round_robin_proto;
     upstream->type.round_robin = urr;
 
