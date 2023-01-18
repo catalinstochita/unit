@@ -61,6 +61,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     nxt_sockaddr_t *sa;
     nxt_conf_value_t *servers_conf, *srvcf, *wtcf, *hhcf;
     nxt_upstream_round_robin_t *urr;
+    pthread_t health_thread;
     // struct arg_struct *args = malloc(sizeof(struct arg_struct));
 
     static nxt_str_t servers = nxt_string("servers");
@@ -137,7 +138,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     // args->task = &task;
 
     nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 1");
-    err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, NULL);
+    err = pthread_create(&health_thread, NULL, nxt_upstream_health_handler, NULL);
     nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 2");
     if (err != 0)
     {
