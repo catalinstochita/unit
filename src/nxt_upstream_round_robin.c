@@ -53,7 +53,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
                                 nxt_conf_value_t *upstream_conf, nxt_upstream_t *upstream)
 {
     double total, k, w;
-    int err;
+    // int err;
     size_t size;
     uint32_t i, n, next, wt;
     nxt_mp_t *mp;
