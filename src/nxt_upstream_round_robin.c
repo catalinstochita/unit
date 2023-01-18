@@ -53,7 +53,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
                                 nxt_conf_value_t *upstream_conf, nxt_upstream_t *upstream)
 {
     double total, k, w;
-    // int err;
+    int err;
     size_t size;
     uint32_t i, n, next, wt;
     nxt_mp_t *mp;
@@ -136,11 +136,14 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     args->urr = urr;
     args->task = task;
 
-    // err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, args);
-    // if (err != 0)
-    // {
-    //     return NXT_ERROR;
-    // }
+    nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 1");
+    err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, args);
+    nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 2");
+    if (err != 0)
+    {
+        nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 3");
+        return NXT_ERROR;
+    }
     upstream->proto = &nxt_upstream_round_robin_proto;
     upstream->type.round_robin = urr;
 
@@ -158,6 +161,7 @@ static void *nxt_upstream_health_handler(void *arg)
     n = urr->items;
     while (1)
     {
+        nxt_log(task, NXT_LOG_NOTICE, "CATA LOG REPET");
         for (i = 0; i < n; i++)
         {
             // if (urr->server[i].health_status == 1)
