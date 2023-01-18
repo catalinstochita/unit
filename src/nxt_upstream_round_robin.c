@@ -131,7 +131,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].weight = wt;
         urr->server[i].effective_weight = wt;
         urr->server[i].health = hh;
-        *urr->server[i].health_status = 1;
+        *(urr->server[i].health_status) = 1;
     }
 
     args->urr = urr;
@@ -166,14 +166,14 @@ static void *nxt_upstream_health_handler(void *arg)
         nxt_log(task, NXT_LOG_NOTICE, "CATA LOG REPET");
         for (i = 0; i < n; i++)
         {
-            nxt_log(task, NXT_LOG_NOTICE, "CURRENT HEALTH %uz", urr->server[i].health_status);
-            if (*urr->server[i].health_status == 1)
+            nxt_log(task, NXT_LOG_NOTICE, "CURRENT HEALTH %uz", *(urr->server[i].health_status));
+            if (*(urr->server[i].health_status) == 1)
             {
-                *urr->server[i].health_status = 0;
+                *(urr->server[i].health_status) = 0;
             }
             else
             {
-                *urr->server[i].health_status = 1;
+                *(urr->server[i].health_status) = 1;
             }
             // nxt_http_request_send(task, r, out);
             // }
@@ -263,8 +263,8 @@ nxt_upstream_round_robin_server_get(nxt_task_t *task, nxt_upstream_server_t *us)
 
     for (i = 0; i < n; i++)
     {
-        nxt_log(task, NXT_LOG_NOTICE, "HEALTH %uz", *s[i].health_status);
-        if (*s[i].health_status == 0)
+        nxt_log(task, NXT_LOG_NOTICE, "HEALTH %uz", *(s[i].health_status));
+        if (*(s[i].health_status) == 0)
         {
             continue;
         }
