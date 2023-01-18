@@ -131,7 +131,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].weight = wt;
         urr->server[i].effective_weight = wt;
         urr->server[i].health = hh;
-        urr->server[i].health_status = 1;
+        *urr->server[i].health_status = 1;
     }
 
     args->urr = urr;
