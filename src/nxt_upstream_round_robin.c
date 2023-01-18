@@ -178,8 +178,8 @@ static void *nxt_upstream_health_handler(void *arg)
             // }
             sleep(30);
         }
-        return NULL;
     }
+    return NULL;
 }
 
 //     nxt_thread_link_t *link;
