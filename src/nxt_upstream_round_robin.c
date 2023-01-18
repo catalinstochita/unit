@@ -33,7 +33,7 @@ struct nxt_upstream_round_robin_s
 {
     uint32_t items;
     nxt_upstream_round_robin_server_t server[0];
-    pthread_t health_thread;
+    pthread_t *health_thread;
 };
 
 static nxt_upstream_t *nxt_upstream_round_robin_joint_create(
@@ -145,7 +145,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 3");
         return NXT_ERROR;
     }
-    urr->health_thread = health_thread;
+    urr->health_thread = &health_thread;
     upstream->proto = &nxt_upstream_round_robin_proto;
     upstream->type.round_robin = urr;
 
