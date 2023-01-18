@@ -145,7 +145,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 3");
         return NXT_ERROR;
     }
-    upstream->health_thread = health_thread;
+    urr->health_thread = health_thread;
     upstream->proto = &nxt_upstream_round_robin_proto;
     upstream->type.round_robin = urr;
 
