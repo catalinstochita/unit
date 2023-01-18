@@ -133,11 +133,11 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
-    args->urr = &urr;
-    args->task = &task;
+    // args->urr = &urr;
+    // args->task = &task;
 
     nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 1");
-    err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, args);
+    err = pthread_create(&urr->health_thread, NULL, nxt_upstream_health_handler, NULL);
     nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 2");
     if (err != 0)
     {
