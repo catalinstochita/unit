@@ -257,13 +257,13 @@ nxt_upstream_round_robin_server_get(nxt_task_t *task, nxt_upstream_server_t *us)
     s = round_robin->server;
     n = round_robin->items;
 
-    nxt_log(task, NXT_LOG_NOTICE, "\"uidmap\" field has no \"container\" "
-                                  "entry for user %u",
+    nxt_log(task, NXT_LOG_NOTICE, "SERVERS %uz",
             n);
 
     for (i = 0; i < n; i++)
     {
-        if (*s[i].health_status == 0)
+        nxt_log(task, NXT_LOG_NOTICE, "HEALTH %uz", s[i].health_status);
+        if (s[i].health_status == 0)
         {
             continue;
         }
