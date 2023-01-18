@@ -168,7 +168,7 @@ static void *nxt_upstream_health_handler(void *arg)
             {
                 urr->server[i].health_status = 1;
             }
-            nxt_http_request_send(task, r, out);
+            // nxt_http_request_send(task, r, out);
         }
         sleep(30);
     }
