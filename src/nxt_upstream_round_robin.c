@@ -263,7 +263,7 @@ nxt_upstream_round_robin_server_get(nxt_task_t *task, nxt_upstream_server_t *us)
 
     for (i = 0; i < n; i++)
     {
-        if (s[i].health_status == 0)
+        if (*s[i].health_status == 0)
         {
             continue;
         }
