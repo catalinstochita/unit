@@ -154,142 +154,142 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
 
 static void *nxt_upstream_health_handler(void *arg)
 {
-    // int i, n;
-    // struct arg_struct *args = (struct arg_struct *)arg;
-    // nxt_task_t *task = *args->task;
-    // nxt_upstream_round_robin_t *urr = *args->urr;
+    int i, n;
+    struct arg_struct *args = (struct arg_struct *)arg;
+    nxt_task_t *task = args->task;
+    nxt_upstream_round_robin_t *urr = args->urr;
     // struct nxt_http_request_s *r = malloc(sizeof(struct nxt_http_request_s));
     // struct nxt_buf_s *out = malloc(sizeof(struct nxt_buf_s));
-    // n = urr->items;
+    n = urr->items;
     while (1)
     {
-        // nxt_log(task, NXT_LOG_NOTICE, "CATA LOG REPET");
-        // for (i = 0; i < n; i++)
-        // {
-        // if (urr->server[i].health_status == 1)
-        // {
-        //     urr->server[i].health_status = 0;
-        // }
-        // else
-        // {
-        //     urr->server[i].health_status = 1;
-        // }
-        // nxt_http_request_send(task, r, out);
-        // }
-        sleep(30);
-    }
-    return NULL;
-}
-
-//     nxt_thread_link_t *link;
-//     // nxt_str_t hh;
-//     uint32_t i, n;
-//     n = urr->server;
-//     while (1)
-//     {
-//         for (i = 0; i < n; i++)
-//         {
-//             // hh = urr->server[i].health;
-//             urr->server[i].health_status = 0;
-//         }
-//         // nxt_debug(task, "upstream health handler: \"%V\"", &urr->items);
-//         nxt_nanosleep(30000000000);
-//     }
-// }
-
-static nxt_upstream_t *
-nxt_upstream_round_robin_joint_create(nxt_router_temp_conf_t *tmcf,
-                                      nxt_upstream_t *upstream)
-{
-    size_t size;
-    uint32_t i, n;
-    nxt_mp_t *mp;
-    nxt_upstream_t *u;
-    nxt_upstream_round_robin_t *urr, *urrcf;
-
-    mp = tmcf->router_conf->mem_pool;
-
-    u = nxt_mp_alloc(mp, sizeof(nxt_upstream_t));
-    if (nxt_slow_path(u == NULL))
-    {
+        nxt_log(task, NXT_LOG_NOTICE, "CATA LOG REPET");
+        for (i = 0; i < n; i++)
+        {
+            if (urr->server[i].health_status == 1)
+            {
+                urr->server[i].health_status = 0;
+            }
+            else
+            {
+                urr->server[i].health_status = 1;
+            }
+            // nxt_http_request_send(task, r, out);
+            // }
+            sleep(30);
+        }
         return NULL;
     }
 
-    *u = *upstream;
+    //     nxt_thread_link_t *link;
+    //     // nxt_str_t hh;
+    //     uint32_t i, n;
+    //     n = urr->server;
+    //     while (1)
+    //     {
+    //         for (i = 0; i < n; i++)
+    //         {
+    //             // hh = urr->server[i].health;
+    //             urr->server[i].health_status = 0;
+    //         }
+    //         // nxt_debug(task, "upstream health handler: \"%V\"", &urr->items);
+    //         nxt_nanosleep(30000000000);
+    //     }
+    // }
 
-    urrcf = upstream->type.round_robin;
-
-    size = sizeof(nxt_upstream_round_robin_t) + urrcf->items * sizeof(nxt_upstream_round_robin_server_t);
-
-    urr = nxt_mp_alloc(mp, size);
-    if (nxt_slow_path(urr == NULL))
+    static nxt_upstream_t *
+    nxt_upstream_round_robin_joint_create(nxt_router_temp_conf_t * tmcf,
+                                          nxt_upstream_t * upstream)
     {
-        return NULL;
-    }
+        size_t size;
+        uint32_t i, n;
+        nxt_mp_t *mp;
+        nxt_upstream_t *u;
+        nxt_upstream_round_robin_t *urr, *urrcf;
 
-    u->type.round_robin = urr;
+        mp = tmcf->router_conf->mem_pool;
 
-    n = urrcf->items;
-    urr->items = n;
-
-    for (i = 0; i < n; i++)
-    {
-        urr->server[i] = urrcf->server[i];
-    }
-
-    return u;
-}
-
-static void
-nxt_upstream_round_robin_server_get(nxt_task_t *task, nxt_upstream_server_t *us)
-{
-    int32_t total;
-    uint32_t i, n;
-    nxt_upstream_round_robin_t *round_robin;
-    nxt_upstream_round_robin_server_t *s, *best;
-
-    best = NULL;
-    total = 0;
-
-    round_robin = us->upstream->type.round_robin;
-
-    s = round_robin->server;
-    n = round_robin->items;
-
-    nxt_log(task, NXT_LOG_NOTICE, "\"uidmap\" field has no \"container\" "
-                                  "entry for user %u",
-            n);
-
-    for (i = 0; i < n; i++)
-    {
-        // if (s[i].health_status == 0)
-        // {
-        //     continue;
-        // }
-        s[i].current_weight += s[i].effective_weight;
-        total += s[i].effective_weight;
-
-        if (s[i].effective_weight < s[i].weight)
+        u = nxt_mp_alloc(mp, sizeof(nxt_upstream_t));
+        if (nxt_slow_path(u == NULL))
         {
-            s[i].effective_weight++;
+            return NULL;
         }
 
-        if (best == NULL || s[i].current_weight > best->current_weight)
+        *u = *upstream;
+
+        urrcf = upstream->type.round_robin;
+
+        size = sizeof(nxt_upstream_round_robin_t) + urrcf->items * sizeof(nxt_upstream_round_robin_server_t);
+
+        urr = nxt_mp_alloc(mp, size);
+        if (nxt_slow_path(urr == NULL))
         {
-            best = &s[i];
+            return NULL;
         }
+
+        u->type.round_robin = urr;
+
+        n = urrcf->items;
+        urr->items = n;
+
+        for (i = 0; i < n; i++)
+        {
+            urr->server[i] = urrcf->server[i];
+        }
+
+        return u;
     }
 
-    if (best == NULL || total == 0)
+    static void
+    nxt_upstream_round_robin_server_get(nxt_task_t * task, nxt_upstream_server_t * us)
     {
-        us->state->error(task, us);
-        return;
+        int32_t total;
+        uint32_t i, n;
+        nxt_upstream_round_robin_t *round_robin;
+        nxt_upstream_round_robin_server_t *s, *best;
+
+        best = NULL;
+        total = 0;
+
+        round_robin = us->upstream->type.round_robin;
+
+        s = round_robin->server;
+        n = round_robin->items;
+
+        nxt_log(task, NXT_LOG_NOTICE, "\"uidmap\" field has no \"container\" "
+                                      "entry for user %u",
+                n);
+
+        for (i = 0; i < n; i++)
+        {
+            // if (s[i].health_status == 0)
+            // {
+            //     continue;
+            // }
+            s[i].current_weight += s[i].effective_weight;
+            total += s[i].effective_weight;
+
+            if (s[i].effective_weight < s[i].weight)
+            {
+                s[i].effective_weight++;
+            }
+
+            if (best == NULL || s[i].current_weight > best->current_weight)
+            {
+                best = &s[i];
+            }
+        }
+
+        if (best == NULL || total == 0)
+        {
+            us->state->error(task, us);
+            return;
+        }
+
+        best->current_weight -= total;
+        us->sockaddr = best->sockaddr;
+        us->protocol = best->protocol;
+        us->server.round_robin = best;
+
+        us->state->ready(task, us);
     }
-
-    best->current_weight -= total;
-    us->sockaddr = best->sockaddr;
-    us->protocol = best->protocol;
-    us->server.round_robin = best;
-
-    us->state->ready(task, us);
-}
