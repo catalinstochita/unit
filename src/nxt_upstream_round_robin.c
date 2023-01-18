@@ -25,8 +25,8 @@ struct nxt_upstream_round_robin_server_s
 
 struct arg_struct
 {
-    nxt_upstream_round_robin_t **urr;
-    nxt_task_t **task;
+    nxt_upstream_round_robin_t *urr;
+    nxt_task_t *task;
 };
 
 struct nxt_upstream_round_robin_s
@@ -62,7 +62,7 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
     nxt_conf_value_t *servers_conf, *srvcf, *wtcf, *hhcf;
     nxt_upstream_round_robin_t *urr;
     pthread_t health_thread;
-    // struct arg_struct *args = malloc(sizeof(struct arg_struct));
+    struct arg_struct *args = malloc(sizeof(struct arg_struct));
 
     static nxt_str_t servers = nxt_string("servers");
     static nxt_str_t weight = nxt_string("weight");
@@ -134,11 +134,11 @@ nxt_upstream_round_robin_create(nxt_task_t *task, nxt_router_temp_conf_t *tmcf,
         urr->server[i].health_status = 1;
     }
 
-    // args->urr = &urr;
-    // args->task = &task;
+    args->urr = urr;
+    args->task = task;
 
     nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 1");
-    err = pthread_create(&health_thread, NULL, nxt_upstream_health_handler, NULL);
+    err = pthread_create(&health_thread, NULL, nxt_upstream_health_handler, args);
     nxt_log(task, NXT_LOG_NOTICE, "CATA LOG 2");
     if (err != 0)
     {
