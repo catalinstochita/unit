@@ -25,8 +25,8 @@ struct nxt_upstream_round_robin_server_s
 
 struct arg_struct
 {
-    nxt_upstream_round_robin_t *urr;
-    nxt_task_t *task;
+    nxt_upstream_round_robin_t **urr;
+    nxt_task_t **task;
 };
 
 struct nxt_upstream_round_robin_s
