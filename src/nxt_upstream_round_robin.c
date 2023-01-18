@@ -255,7 +255,8 @@ nxt_upstream_round_robin_server_get(nxt_task_t *task, nxt_upstream_server_t *us)
     n = round_robin->items;
 
     nxt_log(task, NXT_LOG_NOTICE, "\"uidmap\" field has no \"container\" "
-                                  "entry for user ");
+                                  "entry for user %u",
+            n);
 
     for (i = 0; i < n; i++)
     {
